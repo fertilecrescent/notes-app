@@ -1,0 +1,81 @@
+
+#############
+
+-upon logging in, a user sees a box with a list of that user's folders
+-folders are sorted, either by date updated or alphabetically, by a dropdown in the upper left, where date updated is the default. but we should save the last option chosen by the user.
+-in the bottom left are a red plus icon (for removing folders) and a green plus icon (for deleting folders). when we delete a folder we'll first ask "are you sure?". when we add a folder we'll ask for a name but duplicate names are not allowed
+-when we select a folder, we'll see all the notes for that folder, displayed to the right of the list of all folders
+-notes have the same sorting, adding, and deleting mechanisms
+-when we select a note, we'll see a text area to the right of all the notes, with its content
+-content is saved to the database when a new note is selected, or the browser is closed, or any time the text area disappears from the screen.  Also, when it is on the screen, we'll save it every time it differs from the previous saved content by 10 characters
+
+-after logging in, a user sees folders-box
+-folders-box displays a list of folders
+-folders display a name
+-folders are sorted by folder-sort (a dropdown)
+-folders are highlighted on hover, and highlighted (slightly differently) when selected
+    -dark -> light when folders-box is selected, light -> dark when it's not
+-folder-sort can be either 'last updated', or 'alphabetical'
+-folder-delete is a red, minus icon
+-folder-delete on click removes the selected folder (if there is anyone),
+but only after asking "are you sure?"
+-folder-add is a green, plus icon
+-folder-add on click asks for a name 
+    -when a name is entered we validate that the name is not already taken (displaying a message if it is)
+    -a name can't be longer than what can be displayed (need to calculate this)
+    -and then we add it to the display list and the database
+    -it should be at the top of the display list
+    -and then we select it
+-when a folder is selected, notes-list is displayed to the right of folder-list
+-notes-list is almost identical to folder-list, except for notes
+-when a note is selected, a content-box is displayed to the right of notes-list
+-content is saved when a note's contents box gets hidden (e.g. by selecting another note, or another folder, or exiting the browser)
+-content is just plain text
+
+#############
+
+-upon logging in, a user sees a box with a list of that user's folders
+
+<div class="folders-box">
+    <div class="folder">
+        <span class="folder-name">general</span>
+        <span class="folder-name">daily feelings</span>
+        <span class="folder-name">todo</span>
+        <span class="folder-name">lyrics</span>
+    </div>
+</div>
+
+:root {
+    --column-width: 100px;
+    --column-height: 700px;
+    --item-height: 45px;
+    --item-padding: 10px;
+    --light-grey: ;
+    --dark-grey: ;
+}
+
+.folders-box {
+    width: var(--column-width);
+    height: var(--column-height);
+    margin: 0px;
+    padding: var(--item-padding);
+}
+
+.folder {
+    width: 100%;
+    height: 
+}
+
+.folder.selected {
+    color: var(--dark-gray);
+}
+
+.folder:hover {
+    color: var(--light-gray);
+}
+
+NOTE: for now, just get folders to work
+
+TODO: figure out how to do the animation where we open the notes and move the folders to the left. practice with a simple box example.  we animation the translation to the left. and we animate the translation of the notes upwards from the bottom of the screen.
+
+TODO STUDY IN FUTURE: research when lists are the appropriate option in HTML and why do use them over divs
