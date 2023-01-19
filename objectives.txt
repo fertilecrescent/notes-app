@@ -1,0 +1,2 @@
+(check) display a list of folders and get the style looking good (fake data for now)
+Make it work with the database

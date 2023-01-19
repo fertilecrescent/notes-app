@@ -1,0 +1,10 @@
+Can you give a width to an item that is inline?
+Oh wow, my study of css has already come to help me.  I understood how to use padding and box-sizing to get the correct size for my border.
+Bro...you need to do that thing where the page display automatically updates upon file changes.
+Random idea...don't be afraid to have a 'utils' module...it's not a sin.
+Research decimal point px values (seems to work?)
+I was born to make simple UIs with old school colors (pastels!)
+When using calc(), addition and subtraction characters must surrounded by whitespace (who knew)!
+Research fonts...which are built in, which are cross platform, importing fonts...
+Research stylistic use of fonts (font theory?)
+It'd be better to design things ahead of time in figma...
