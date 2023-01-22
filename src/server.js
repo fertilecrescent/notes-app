@@ -1,12 +1,17 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const Folder = require('./models/Folder.js');
-const connectToDB = require('./connectToDB.js');
+const connectToDB = require('./utils/connectToDB.js');
 
 mongoose.set('strictQuery', false); // to avoid a warning and prepare for update
 connectToDB();
 
 const app = express();
+app.use(express.static('frontend/public'));
+
+app.get('/', (req, res) => {
+    res.sendFile(`${__dirname}/frontend/index.html`);
+});
 
 app.get('/folders', (req, res) => {
     Folder.find({}).exec().then(
