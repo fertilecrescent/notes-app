@@ -11,18 +11,16 @@ make it work with the database
         (cool!) NOTE: might have to use express.static middleware but not sure
             ohh!!! I see how it's done now...you only use express to send the html file, but when your browser sees <script> and <link> tags it comes back and asks your server for those...so that's why you need to set express.static so that your browser knows where to look...
     display folders on the frontend
-        we'll need a function that fetches the appropriate URL (GET root + folders/)
-        make sure you save the root url as a variable at the top of the file (localhost:3000 for now)
-        a javascript function gets the folders as a list from the server
-            NOTE: wouldn't it be better to have the REST API and the server on the same machine?
-        loop through .folder elements assigning their folder name (later you can do sorting)
+        (check) make sure you save the root url as a variable at the top of the file (localhost:3000 for now)
+        (check) we need a javascript function gets the folders as a list from the server
+        (check!) need a function to create a .folder for each folder and append it #folder-container
 
     delete folders from the frontend
         -we need to be able to select a folder.  that is, when we click on it, it's color should change and stay changed, and we should save it's value (name) to a global variable somewhere
         -we have a button underneath .folder-box. it's red minus icon. we need to make it look good.
             -assign it a click event callback function that fetches (DELETE root + folders/ + name/) (remember name is stored in a global)
             -when it returns, we should remove .folder from the frontend, or display an error message (just do it as an alert() for now)
-        
+            e
     add folders from the frontend
         -we have a button underneath .folder-box.  it's a green plus icon.  its click callback should fetch POST root + folders/ + name/ (where name is the global variable selected_folder.name)
         -when we hear back from the api, we should either display an error message (if the name is already taken) or add the new folder

@@ -17,7 +17,7 @@ html {
     height: 80%;
 }
 
-.folders-box {
+#folder-container {
     width: var(--column-width);
     height: var(--column-height);
     overflow: scroll;

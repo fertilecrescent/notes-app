@@ -14,8 +14,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/folders', (req, res) => {
+    console.log('folders endpoint');
     Folder.find({}).exec().then(
-        (folders) => res.json(folders),
+        (folders) => {
+            res.json(folders);
+            console.log(folders);
+        },
         (err) => {
             res.json(`There was an issue retrieving your folders`);
             console.log(err);
