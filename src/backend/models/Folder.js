@@ -1,10 +1,11 @@
-const { Schema, Model } = require('mongoose');
+const { Schema, model } = require('mongoose');
 
 const folderSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     }
 });
 
-module.exports = new Model('Folder', folderSchema);
+module.exports = new model('Folder', folderSchema);

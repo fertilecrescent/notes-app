@@ -1,3 +1,23 @@
 (check) display a list of folders and get the style looking good (fake data for now)
 make it work with the database
-    create a folder schema
+    (check) create a folder schema
+    (check) write code for connecting to the database
+    (check) configure and use a .env folder for your database password and hit it from github
+    (check) write DB endpoints for adding, retrieving, and deleting folders
+    display folders on the frontend
+
+        we'll need a function that fetches the appropriate URL (GET root + folders/)
+        make sure you save the root url as a variable at the top of the file (localhost:3000 for now)
+        a javascript function gets the folders as a list from the server
+            NOTE: wouldn't it be better to have the REST API and the server on the same machine?
+        loop through .folder elements assigning their folder name (later you can do sorting)
+
+
+    delete folders from the frontend
+        each .folder has a button
+            we'll need to make it look good
+        when we assign names to .folder, we also assign a click event callback function to the button,  which fetches the appropriate api endpoint (DELETE root + folders/ + name/)
+            when it returns, we should remove .folder from the frontend, or display an error message (just do it as an alert() for now)
+        
+    add folders from the frontend
+    and that's it...
