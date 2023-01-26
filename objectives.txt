@@ -1,5 +1,5 @@
 (check) display a list of folders and get the style looking good (fake data for now)
-make it work with the database
+(check) make it work with the database
     (check) create a folder schema
     (check) write code for connecting to the database
     (check) configure and use a .env folder for your database password and hit it from github
@@ -28,12 +28,14 @@ make it work with the database
         -(check) input value should reset when it's hidden
         -(check) when we enter a value, a callback should should fetch POST root + folders/ + name/
         -(check) when we hear back from the api, we should either display an error message (if the name is already taken) or add the new folder
-    
-    -all folders should be unselected when the add-button is pressed
-    -when you click anywhere else other than the selected folder, the selected folder should be unselected
-    -remove horizontal scrollbar
 
-shouldn't need to refresh the server on changes to the backend or the browser on changes to the frontend
+-(check) deselect folder when clicking on anything that's not that folder is clicked
+
+
+
+
+-remove horizontal scrollbar
+
+-shouldn't need to refresh the server on changes to the backend or the browser on changes to the frontend
 maybe delete button should change color when a folder is selected
-
-testing
+-testing

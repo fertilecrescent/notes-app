@@ -42,5 +42,3 @@ This means...
         (check) add-folder-button should have a 'focusout' event that accesses .unclickable, removes .unclickable and adds .clickable
     
 
-We might want to 'dim the background' when add-folder-input is active
-

@@ -82,16 +82,16 @@ class Display {
         const folder_name = document.createElement('div');
         folder_name.textContent = name;
         folder.appendChild(folder_name);
-        folder.addEventListener('click', this.selectFolder.bind(folder))
+        folder.addEventListener('click', () => this.selectFolder(folder))
         return folder;
     };
 
-    static selectFolder() {
+    static selectFolder(folder) {
         if (Globals.selectedFolder) {
             Globals.selectedFolder.classList.remove('selected');
         };
-        this.classList.add('selected');
-        Globals.selectedFolder = this;
+        folder.classList.add('selected');
+        Globals.selectedFolder = folder;
     };
 
     static removeSelectedFolder() {
@@ -133,6 +133,22 @@ function enableClickables() {
         unclickable.classList.add('clickable');
     });
 }
+
+function deselectFolder() {
+    Globals.selectedFolder.classList.remove('selected');
+    Globals.selectedFolder = null;
+}
+
+document.addEventListener('click', (event) => {
+    const deleteFolderButton = document.getElementById('delete-folder-button');
+    const selectedFolder = Globals.selectedFolder;
+
+    if (selectedFolder && 
+    !(event.target === selectedFolder) && 
+    !(event.target === deleteFolderButton)) {
+        deselectFolder();
+    }
+});
 
 document.getElementById('add-folder-button').addEventListener('click', () => {
     disableClickables();

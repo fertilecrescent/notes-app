@@ -37,6 +37,10 @@ body {
     background-color: var(--light-purple);
 }
 
+#all-folders:focus {
+    width: 900px;
+}
+
 .folder {
     display: flex;
     justify-content: center;
