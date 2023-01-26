@@ -30,11 +30,11 @@
         -(check) when we hear back from the api, we should either display an error message (if the name is already taken) or add the new folder
 
 -(check) deselect folder when clicking on anything that's not that folder is clicked
+-(check) remove horizontal scrollbar
 
 
 
 
--remove horizontal scrollbar
 
 -shouldn't need to refresh the server on changes to the backend or the browser on changes to the frontend
 maybe delete button should change color when a folder is selected

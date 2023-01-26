@@ -31,10 +31,12 @@ body {
     box-sizing: border-box;
     width: var(--column-width);
     height: var(--column-height);
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
     border: 1.5px solid var(--purple);
     border-radius: var(--border-radius);
     background-color: var(--light-purple);
+    
 }
 
 #all-folders:focus {
