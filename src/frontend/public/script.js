@@ -78,7 +78,7 @@ class Display {
 
     static makeFolder(name) {
         const folder = document.createElement('div');
-        folder.className = 'folder';
+        folder.className = 'folder clickable';
         const folder_name = document.createElement('div');
         folder_name.textContent = name;
         folder.appendChild(folder_name);
@@ -120,7 +120,22 @@ document.getElementById('delete-folder-button').addEventListener('click', () => 
     };
 });
 
+function disableClickables() {
+    Array.from(document.getElementsByClassName('clickable')).forEach(clickable => {
+        clickable.classList.remove('clickable');
+        clickable.classList.add('unclickable');
+    });
+}
+
+function enableClickables() {
+    Array.from(document.getElementsByClassName('unclickable')).forEach(unclickable => {
+        unclickable.classList.remove('unclickable');
+        unclickable.classList.add('clickable');
+    });
+}
+
 document.getElementById('add-folder-button').addEventListener('click', () => {
+    disableClickables();
     const addFolderInput = document.getElementById('add-folder-input');
     addFolderInput.style.visibility = 'visible';
     addFolderInput.focus();
@@ -128,6 +143,7 @@ document.getElementById('add-folder-button').addEventListener('click', () => {
 
 document.getElementById('add-folder-input').addEventListener('focusout', (event) => {
     event.preventDefault();
+    enableClickables();
     const addFolderInput = document.getElementById('add-folder-input');
     addFolderInput.value = '';
     addFolderInput.style.visibility = 'hidden';

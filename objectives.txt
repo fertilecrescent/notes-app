@@ -10,20 +10,30 @@ make it work with the database
         (check) set up a callback for GET requests to / that uses res.sendFile to send index.html, style.css, and script.js to the frontend
         (cool!) NOTE: might have to use express.static middleware but not sure
             ohh!!! I see how it's done now...you only use express to send the html file, but when your browser sees <script> and <link> tags it comes back and asks your server for those...so that's why you need to set express.static so that your browser knows where to look...
-    display folders on the frontend
+    (check) display folders on the frontend
         (check) make sure you save the root url as a variable at the top of the file (localhost:3000 for now)
         (check) we need a javascript function gets the folders as a list from the server
         (check!) need a function to create a .folder for each folder and append it #folder-container
+    (check) delete folders from the frontend
+        -(check) we need to be able to select a folder.  that is, when we click on it, it's color should change and stay changed, and we should save it to a global variable somewhere
+        -(check) we have a button underneath .folder-box. it's red minus icon. we need to make it look good.
+            -(check) assign it a click event callback function that fetches (DELETE root + folders/ + name/) (remember name is stored in a global)
+            -(check) when it returns, we should remove .folder from the frontend, or display an error message (just do it as an alert() for now)
+    (check) add folders from the frontend
+        -(check) we have a button underneath .folder-box.  it's a green plus icon.
+        -(check) when it's clicked, we should see a popup with an input, asking for a name
+        -(check) when somewhere else on the screen is clicked, the popup should be hidden again
+        -(check) make the screen loading look better (either load the screen after the database call, or do something about the width of the folder container (give it some initial content) so that it doesn't have to resize)...preferably the second option if that works
+        -(check) input should focus when it's made visible
+        -(check) input value should reset when it's hidden
+        -(check) when we enter a value, a callback should should fetch POST root + folders/ + name/
+        -(check) when we hear back from the api, we should either display an error message (if the name is already taken) or add the new folder
+    
+    -all folders should be unselected when the add-button is pressed
+    -when you click anywhere else other than the selected folder, the selected folder should be unselected
+    -remove horizontal scrollbar
 
-    delete folders from the frontend
-        -we need to be able to select a folder.  that is, when we click on it, it's color should change and stay changed, and we should save it's value (name) to a global variable somewhere
-        -we have a button underneath .folder-box. it's red minus icon. we need to make it look good.
-            -assign it a click event callback function that fetches (DELETE root + folders/ + name/) (remember name is stored in a global)
-            -when it returns, we should remove .folder from the frontend, or display an error message (just do it as an alert() for now)
-            e
-    add folders from the frontend
-        -we have a button underneath .folder-box.  it's a green plus icon.  its click callback should fetch POST root + folders/ + name/ (where name is the global variable selected_folder.name)
-        -when we hear back from the api, we should either display an error message (if the name is already taken) or add the new folder
-    and that's it...
+shouldn't need to refresh the server on changes to the backend or the browser on changes to the frontend
+maybe delete button should change color when a folder is selected
 
-shouldn't need to refresh the server on changes to the backend or frontend
+testing

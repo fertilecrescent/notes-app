@@ -68,7 +68,6 @@ body {
 
 .folder:hover {
     background-color: var(--light-green);
-    cursor: pointer;
 }
 
 .folder.selected {
@@ -115,8 +114,12 @@ body {
     color: transparent;
 }
 
-.button:hover {
+.clickable:hover {
     cursor: pointer;
+}
+
+.unclickable {
+    pointer-events: none;
 }
 
 input:hover {
