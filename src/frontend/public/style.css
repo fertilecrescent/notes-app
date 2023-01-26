@@ -1,29 +1,40 @@
 :root {
-    --column-width: 225px;
+    --column-width: 230px;
     --item-height: 45px;
     --num-items: 9;
     --column-height: calc(var(--num-items)*var(--item-height) + calc(var(--item-height)/2));
+    --border-radius: 10px;
     --item-padding: 10px;
     --light-grey: rgb(206, 206, 206);
     --dark-grey: rgb(102, 102, 102);
     --font-color: rgb(0, 0, 217);
-    --border-color: rgb(255, 137, 255);
+    --purple: rgb(255, 137, 255);
+    --light-purple: rgba(255, 137, 255, 20%);
+    --green: aquamarine;
+    --light-green: rgb(188, 255, 233);
+    --dark-green: rgb(3, 255, 171);
+    --folder-icon-offset: 13px;
 }
 
 html {
+    height: 100%;
+}
+
+body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80%;
+    height: 100%;
 }
 
-#folder-container {
+#all-folders {
+    box-sizing: border-box;
     width: var(--column-width);
     height: var(--column-height);
     overflow: scroll;
-    border: 1.5px solid var(--border-color);
-    border-radius: 10px;
-    background-color: rgba(255, 137, 255, 20%);
+    border: 1.5px solid var(--purple);
+    border-radius: var(--border-radius);
+    background-color: var(--light-purple);
 }
 
 .folder {
@@ -32,13 +43,13 @@ html {
     align-items: center;
     text-align: center;
     box-sizing: border-box;
-    width: 100%;
+    width: var(--column-width);
     height: var(--item-height);
     color: var(--font-color);
-    background-color: aquamarine;
+    background-color: var(--green);
     margin: 0px;
     padding: var(--item-padding);
-    border-top: solid var(--border-color);
+    border-top: solid var(--purple);
     border-width: 1.5px;
     font-size: 14px;
     font-family: monospace;
@@ -49,18 +60,65 @@ html {
 }
 
 .folder:last-child {
-    border-bottom: solid var(--border-color);
+    border-bottom: solid var(--purple);
     border-width: 1.5px;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-}
-
-.folder.selected {
-    color: var(--dark-gray);
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
 }
 
 .folder:hover {
-    color: var(--light-gray);
-    background-color: rgb(188, 255, 233);
-    /* cursor: pointer; */
+    background-color: var(--light-green);
+    cursor: pointer;
+}
+
+.folder.selected {
+    background-color: var(--dark-green);
+}
+
+#folder-buttons {
+    margin-top: var(--folder-icon-offset);
+    margin-left: calc(var(--border-radius)/2);
+    display: flex;
+}
+
+#add-folder-button {
+    color: var(--dark-green);
+    margin-right: 5px;
+}
+
+#delete-folder-button {
+    color: var(--purple);
+}
+
+#add-folder-input {
+    --width: 280px;
+    --height: var(--item-height);
+    position: absolute;
+    top: 50% - calc(var(--height/2));;
+    left: 50% - calc(var(--width)/2);
+    width: var(--width);
+    height: var(--height);
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 14px;
+    font-family: monospace;
+    visibility: hidden;
+}
+
+#add-folder-input:focus {
+    outline: none;
+}
+
+#add-folder-input:focus::placeholder {
+    color: transparent;
+}
+
+.button:hover {
+    cursor: pointer;
+}
+
+input:hover {
+    cursor: pointer;
 }

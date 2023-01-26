@@ -14,15 +14,13 @@ app.get('/', (req, res) => {
 });
 
 app.get('/folders', (req, res) => {
-    console.log('folders endpoint');
     Folder.find({}).exec().then(
         (folders) => {
             res.json(folders);
-            console.log(folders);
         },
         (err) => {
-            res.json(`There was an issue retrieving your folders`);
             console.log(err);
+            res.status(500).send();
         }
     );
 });
@@ -30,43 +28,41 @@ app.get('/folders', (req, res) => {
 app.post('/folders/:name', (req, res) => {
     const folder = new Folder({name: req.params.name});
     folder.save((err) => {
+        console.log(err);
         if (err) {
             if (err.code === 11000) {
-                res.send(`There is already a folder named ${req.params.name}`)
-                console.log(`There is already a folder named ${req.params.name}`);
+                console.log(err);
+                var message = `A folder named '${req.params.name}' already exists`
+                res.status(400);
+                res.send({'message': message});
             } else {
-                res.send(err.message);
-                console.log(err.message);
+                console.log(err);
+                res.status(500).send();
             }
         } else {
-            res.send(`Successfuly saved new folder' ${folder.name}'`);
-        };
-    });
-
+            res.status(200).send();
+        }
+    })
 });
 
 app.delete('/folders', (req, res) => {
     Folder.deleteMany({}).exec().then(
-        (folders) => {
-            res.send('Successfully deleted all folders');
-            console.log(folders);
-        },
+        undefined,
         (err) => {
-            res.send('There was a problem deleting your folders');
             console.log(err);
+            res.status(500).send();
         }
     );
 });
 
 app.delete('/folders/:name', (req, res) => {
     Folder.deleteOne({name: req.params.name}).exec().then(
-        (folder) => {
-        console.log(folder);
-        res.send(`Successfully deleted '${req.params.name}'`);
+        (delete_data) => {
+            res.status(200).send();
         }, 
         (err) => {
             console.log(err);
-            res.send(`You were unsuccessful in deleting the folder '${req.params.name}'`);
+            res.status(500).send()
         }
     );
 });
