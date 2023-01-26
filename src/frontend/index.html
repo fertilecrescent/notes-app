@@ -9,16 +9,29 @@
     <title>Notes</title>
 </head>
 <body>
-    <div id="folders-container">
-        <div id="all-folders">
-        
+    <div id="content-container">
+        <div id="folders-container">
+            <div id="all-folders">
+            
+            </div>
+            <div id="folder-buttons">
+                <i id="add-folder-button" class="fa-solid fa-folder-plus fa-xl clickable"></i>
+                <i id="delete-folder-button" class="fa-solid fa-folder-minus fa-xl clickable"></i>
+            </div>
+            <input id="add-folder-input" placeholder="new folder">
         </div>
-        <div id="folder-buttons">
-            <i id="add-folder-button" class="fa-solid fa-folder-plus fa-xl clickable"></i>
-            <i id="delete-folder-button" class="fa-solid fa-folder-minus fa-xl clickable"></i>
+        <div id="notes-container">
+            <div id="all-notes">
+                <div class="note clickable"><div>thoughts about paris</div></div>
+            </div>
+            <div id="note-buttons">
+                <i class="fa-solid fa-message-plus"></i>
+                <i id="add-note-button" class="fa-solid fa-square-plus fa-xl clickable"></i>
+                <i id="delete-note-button" class="fa-solid fa-square-minus fa-xl clickable"></i>
+            </div>
+            <input id="add-note-input" placeholder="new note">
         </div>
     </div>
-    <input id="add-folder-input" placeholder="folder-name">
 </body>
 <script src="script.js"></script>
 </html>

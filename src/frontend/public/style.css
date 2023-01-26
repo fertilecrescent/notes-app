@@ -14,6 +14,7 @@
     --light-green: rgb(188, 255, 233);
     --dark-green: rgb(3, 255, 171);
     --folder-icon-offset: 13px;
+    --container-margin: 10px;
 }
 
 html {
@@ -22,12 +23,23 @@ html {
 
 body {
     display: flex;
-    justify-content: center;
+    justify-content: left;
     align-items: center;
     height: 100%;
 }
 
-#all-folders {
+#content-container {
+    display: flex;
+    width: calc(50% + var(--column-width)/2 + var(--container-margin));
+    justify-content: right;
+}
+
+#folders-container, #notes-container {
+    position: relative;
+    margin: var(--container-margin);
+}
+
+#all-folders, #all-notes {
     box-sizing: border-box;
     width: var(--column-width);
     height: var(--column-height);
@@ -39,11 +51,7 @@ body {
     
 }
 
-#all-folders:focus {
-    width: 900px;
-}
-
-.folder {
+.folder, .note {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,48 +69,47 @@ body {
     font-family: monospace;
 }
 
-.folder:first-child {
+.folder:first-child, .note:first-child {
     border-top: none;
 }
 
-.folder:last-child {
+.folder:last-child, .note:last-child {
     border-bottom: solid var(--purple);
     border-width: 1.5px;
     border-bottom-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
 }
 
-.folder:hover {
+.folder:hover, .note:hover {
     background-color: var(--light-green);
 }
 
-.folder.selected {
+.folder.selected, .note.selected {
     background-color: var(--dark-green);
 }
 
-#folder-buttons {
+#folder-buttons, #note-buttons {
     margin-top: var(--folder-icon-offset);
     margin-left: calc(var(--border-radius)/2);
     display: flex;
 }
 
-#add-folder-button {
+#add-folder-button, #add-note-button {
     color: var(--dark-green);
     margin-right: 5px;
 }
 
-#delete-folder-button {
+#delete-folder-button, #delete-note-button {
     color: var(--purple);
 }
 
-#add-folder-input {
-    --width: 280px;
-    --height: var(--item-height);
+#add-folder-input, #add-note-input {
     position: absolute;
-    top: 50% - calc(var(--height/2));;
-    left: 50% - calc(var(--width)/2);
+    --width: 280px;
+    top: calc(var(--column-height)/2 - var(--item-height)/2);
+    left: calc(50% - var(--width)/2);
     width: var(--width);
-    height: var(--height);
+    height: var(--item-height);
     background-color: white;
     border: 2px solid black;
     border-radius: 10px;
@@ -110,13 +117,15 @@ body {
     font-size: 14px;
     font-family: monospace;
     visibility: hidden;
+    z-index: 1;
 }
 
-#add-folder-input:focus {
+#add-folder-input:focus, #add-note-input:focus {
     outline: none;
 }
 
-#add-folder-input:focus::placeholder {
+#add-folder-input:focus::placeholder, 
+#add-note-input:focus::placeholder {
     color: transparent;
 }
 

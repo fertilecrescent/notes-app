@@ -32,10 +32,29 @@
 -(check) deselect folder when clicking on anything that's not that folder is clicked
 -(check) remove horizontal scrollbar
 
+##### now it's time to work on notes!!! #####
+
+-make a frontend for notes
+    -(check) copy and paste the HTML for folders underneath itself, and "folder" in the attributes and class names with "note"
+    -(note) apply the CSS from folders to notes
+    -(check) pick and apply a fontawesome add-note icon
+    -(check) notes-container should appear in the center of the screen, pushing folder-container to the left
+        -(check) wrap notes-container and folders-container in a single container (content-container)
+        -(check) make content container's width be half the size of the screen + half the width of notes container (which is the same as the width of folders container)
+        -(check) make it a flex box and justify content to the right
+    -(check) make add-folder-button appear in the appropriate position while notes-container is active
+    -notes-container should initially be hidden. after adding or selecting a folder it should appear.
+    -selected folder should be active while notes container is active
+
+
 
 
 
 
 -shouldn't need to refresh the server on changes to the backend or the browser on changes to the frontend
 maybe delete button should change color when a folder is selected
+-css variables should only be in root if they're need at that level (otherwise put them in more specific rules)
 -testing
+-alternate stylesheets
+-if a note name is not provided, display thee first n characters in the item display
+-maybe display an appropriate error message if font-awesome fails due to page view limit
