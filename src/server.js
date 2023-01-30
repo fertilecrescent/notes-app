@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 app.get('/folders', (req, res) => {
     Folder.find({}).exec().then(
         (folders) => {
-            res.json(folders);
+            res.json(folders.map(folder => folder.name));
         },
         (err) => {
             res.status(500).send();
@@ -52,11 +52,23 @@ app.delete('/folders', (req, res) => {
 
 app.delete('/folders/:folder_name', (req, res) => {
     Folder.deleteOne({name: req.params.folder_name}).exec().then(
-        (delete_data) => {
+        (result) => {
             res.status(200).send();
         }, 
         (err) => {
             res.status(500).send()
+        }
+    );
+});
+
+app.get('/folders/:folder_name', (req, res) => {
+    // TODO: set the result argument of other query arguments to literally be 'result' as to stay consistent
+    Folder.findOne({name: req.params.folder_name}).then(
+        (result) => {
+            res.json(result.notes.map((note) => note.name));
+        },
+        (err) => {
+            res.status(500).send();
         }
     );
 });
@@ -67,19 +79,16 @@ app.post('/folders/:folder_name/:note_name', (req, res) => {
         notes: {$not: {$elemMatch: {name: req.params.note_name}}}
         },
         {$push: {notes: {name: req.params.note_name}}},
-        (err, updateRes) => {
+        (err, result) => {
+            console.log(err, 'err');
+            console.log(result, 'result');
             if (err) {
-                res.status(500).send()
+                res.status(500).send();
             } else {
-                if (updateRes.matchedCount === 1) {res.status(200).send()}
-                else {
-                    res.status(400).send(
-                        {message: `${req.params.folder_name} already has a note named ${req.params.note_name}. Please choose a unique name.`}
-                    )
-                };
+                res.status(200).send();
             };
         }
-    )
+    );
 });
 
 app.delete('/folders/:folder_name/:note_name', (req, res) => {

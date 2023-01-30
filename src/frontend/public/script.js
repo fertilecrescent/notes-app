@@ -1,8 +1,34 @@
 
 const root = 'http://localhost:3000';
-var Globals = {
-    selectedFolder: null
-};
+
+class Selection {
+
+    constructor() {
+        this.elem = null;
+    }
+
+    _isEmpty() {
+        return this.elem === null
+    }
+
+    select(elem) {
+        this.clear();
+        elem.classList.add('selected');
+        this.elem = elem;
+    }
+
+    clear() {
+        if (!this._isEmpty()) {
+            this.elem.classList.remove('selected');
+        }
+        this.elem = null;
+    }
+}
+
+const selections = {
+    folder: new Selection(),
+    note: new Selection()
+}
 
 class Database {
 
@@ -42,6 +68,22 @@ class Database {
         )
     };
 
+    static getNotesForFolder(folder_name) {
+        const options = {method: 'GET'};
+        return fetch(`${root}/folders/${folder_name}`, options).then(
+            async (res) => {
+                if (!res.ok) {
+                    Promise.reject(new Error('Server error'));
+                } else {
+                    return await res.json();
+                }
+            },
+            (err) => {
+                Promise.reject(err);
+            }
+        );
+    }
+
     static deleteSelectedFolder() {
         const options = {method: 'DELETE'};
         return fetch(`${root}/folders/${Globals.selectedFolder.textContent}`, options).then(
@@ -57,68 +99,48 @@ class Database {
     };
 }
 
-class Display {
+class Folder {
 
-    static displayAllFolders(folder_docs) {
-        var container = document.getElementById('all-folders');
-        for (var doc of folder_docs) {
-            this.addFolder(doc.name, container);
-        };
-    };
+    constructor(name) {
+        this._name = name;
+        this._container = document.getElementById('all-folders');
+        this._dom = this._makeDom();
+    }
 
-    static displayFolder(name) {
-        var container = document.getElementById('all-folders');
-        this.addFolder(name, container);
-    };
+    _clickCallback() {
+        return () => {
+            selections.folder.select(this._dom);
+            Database.getNotesForFolder(this._name).then(
+                (names) => {
+                    console.log(names)
+                },
+                (err) => {
+                    console.log(err);
+                }
+            )
+        }
+    }
 
-    static addFolder(name, container) {
-        var folder = this.makeFolder(name);
-        container.appendChild(folder);
-    };
-
-    static makeFolder(name) {
+    _makeDom() {
         const folder = document.createElement('div');
         folder.className = 'folder clickable';
-        const folder_name = document.createElement('div');
-        folder_name.textContent = name;
-        folder.appendChild(folder_name);
-        folder.addEventListener('click', () => this.selectFolder(folder))
+        folder.textContent = this._name;
+        folder.addEventListener('click', this._clickCallback());
         return folder;
-    };
-
-    static selectFolder(folder) {
-        if (Globals.selectedFolder) {
-            Globals.selectedFolder.classList.remove('selected');
-        };
-        folder.classList.add('selected');
-        Globals.selectedFolder = folder;
-    };
-
-    static removeSelectedFolder() {
-        if (Globals.selectedFolder) {
-            Globals.selectedFolder.classList.remove('selected');
-            Globals.selectedFolder.remove();
-        };
-    };
-}
-
-Database.getAllFolders().then(
-    (folder_docs) => {
-        Display.displayAllFolders(folder_docs);
-    },
-    (err) => {
-        console.log(err);
     }
-);
 
-document.getElementById('delete-folder-button').addEventListener('click', () => {
-    if (Globals.selectedFolder) {
-        Database.deleteSelectedFolder().then(
-            (res) => Display.removeSelectedFolder(),
-            (err) => {console.log(err)}
-        );
-    };
-});
+    display() {
+        this._container.appendChild(this._dom);
+    }
+
+    select() {
+        if (Globals.selectedFolder) {
+            Globals.selectedFolder.classList.remove('selected');
+        };
+        this._dom.classList.add('selected');
+        Globals.selectedFolder = this._dom;
+    }
+}
 
 function disableClickables() {
     Array.from(document.getElementsByClassName('clickable')).forEach(clickable => {
@@ -134,20 +156,13 @@ function enableClickables() {
     });
 }
 
-function deselectFolder() {
-    Globals.selectedFolder.classList.remove('selected');
-    Globals.selectedFolder = null;
-}
-
-document.addEventListener('click', (event) => {
-    const deleteFolderButton = document.getElementById('delete-folder-button');
-    const selectedFolder = Globals.selectedFolder;
-
-    if (selectedFolder && 
-    !(event.target === selectedFolder) && 
-    !(event.target === deleteFolderButton)) {
-        deselectFolder();
-    }
+document.getElementById('delete-folder-button').addEventListener('click', () => {
+    if (Selectables.folder.isSelected()) {
+        Database.deleteSelectedFolder().then(
+            (res) => Display.removeSelectedFolder(),
+            (err) => {console.log(err)}
+        );
+    };
 });
 
 document.getElementById('add-folder-button').addEventListener('click', () => {
@@ -180,3 +195,12 @@ document.getElementById('add-folder-input').addEventListener('keyup', (event) =>
         );
     };
 });
+
+Database.getAllFolders().then(
+    (names) => {
+        names.forEach(n => (new Folder(n)).display());
+    },
+    (err) => {
+        console.log(err);
+    }
+);
