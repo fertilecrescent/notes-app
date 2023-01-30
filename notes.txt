@@ -16,6 +16,9 @@ pointer-events
 Bruh you should look into javascript formatting/ers
 Bruh you should study SVG
 You need to research about accessing the stylesheet through javascript
+What's the difference between 'display: none;' and 'visibility: hidden;'?
+    I think 'visiblity: hidden' doesn't stop an element from taking up space while 'display: none' does;
+typeof() versus instanceof?
 
 --- SCRATCH PAD ---
 

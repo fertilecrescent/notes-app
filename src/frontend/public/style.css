@@ -39,6 +39,10 @@ body {
     margin: var(--container-margin);
 }
 
+#notes-container {
+    display: none;
+}
+
 #all-folders, #all-notes {
     box-sizing: border-box;
     width: var(--column-width);

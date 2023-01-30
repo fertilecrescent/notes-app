@@ -11,7 +11,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "nodemon ./src/server.js"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/fertilecrescent/notes-app/issues"
   },
-  "homepage": "https://github.com/fertilecrescent/notes-app#readme"
+  "homepage": "https://github.com/fertilecrescent/notes-app#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
 }

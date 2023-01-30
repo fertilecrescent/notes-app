@@ -43,18 +43,40 @@
         -(check) make content container's width be half the size of the screen + half the width of notes container (which is the same as the width of folders container)
         -(check) make it a flex box and justify content to the right
     -(check) make add-folder-button appear in the appropriate position while notes-container is active
-    -notes-container should initially be hidden. after adding or selecting a folder it should appear.
-    -selected folder should be active while notes container is active
+
+-make a backend for notes
+    -(check) add a 'notes' field to the Folder schema
+        -(check) do research about arrays in mongoose
+        -(check) do research about strings in mongoose (do you have to set a length?)
+        -(check) do research about subschemas
+        # okay so, I want a given note for a given folder to have a unique 'name' amongst other notes within that folder
+        # apparently, a unique index on an array field enforces that the same value cannot appear in the arrays of more than one document in the collection, but does not prevent the document from appearing more than once in a single document's array. {'wizards': ['gandalf', 'gandalf', 'harry']} is valid, but adding the following document {'wizards': ['gandalf', 'hagrid']} is invalid
+    -(check) write an endpoint for adding (empty) notes to a folder
+        -(check) should be a POST endpoint at /folders/:folder_name/:note_name
+        -(check) function should updateOne on Folder with a query on folder_name, eliminating results with an item in notes whose name equals note_name, and a call back that sends a 400 back to the user, indicated that they attempted to add a note with an already existing name, in the case that no folders matched the query
+        -(check) add some notes to some folders
+    -(check) write an endpoint for retrieving notes at a given folder
+        -(check) should be a GET endpoint at /folders/:folder_name
+        -(check) function should findOne on folder, querying {name: folder_name}, returning the query result to the user, or returning a 500 error if there isn't one
+    -(check) test that the endpoints for adding and retrieving notes work
+    -(check) write and test an endpoint for deleting notes
+
+-(check) make the server run on 'npm start'
+    -(check) set the value of 'package.json'.scrips.start to 'node ./src/server.js
+    #wait! for some reason we get an AtlasError when starting the server this way
+        #the environment variables aren't being read
+            #it was fixed by moving .env to the root of the project directory (i.e. the same directory from which we're starting the server)
+    #but omg! it turns out that I get a 404 error for my static files when I do this...
+        #yeah it's because the route used by express.static is relative to the calling directory.  you can combat this by using __dirname in the argument
 
 
+-(check) shouldn't need to refresh the server on changes to the backend or the browser on changes to the frontend
+    # npm install nodemon then use the 'nodemon' command instead of 'node' to run your server
 
-
-
-
--shouldn't need to refresh the server on changes to the backend or the browser on changes to the frontend
-maybe delete button should change color when a folder is selected
+-maybe delete button should change color when a folder is selected
 -css variables should only be in root if they're need at that level (otherwise put them in more specific rules)
 -testing
 -alternate stylesheets
 -if a note name is not provided, display thee first n characters in the item display
 -maybe display an appropriate error message if font-awesome fails due to page view limit
+-research unique indexes more in depth
