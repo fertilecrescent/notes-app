@@ -87,22 +87,19 @@ app.get('/folders/:folder_name', (req, res) => {
 
 app.post('/folders/:folder_name/:note_name', (req, res) => {
     Folder.updateOne(
-        {name: req.params.folder_name},
+        {name: req.params.folder_name,
+        notes: {$not: {$elemMatch: {name: req.params.note_name}}}}, // should be unique
         {$push: {notes: {name: req.params.note_name}}},
         (err, dbResult) => {
-            console.log(err, 'err');
-            console.log(dbResult, 'result');
             if (err) {
                 res.status(500).send();
             } else {
                 if (dbResult.matchedCount === 0) {
-                    res
-                    .status(400)
-                    .send({message: `There are no folders name ${req.params.folder_name}. Try again.`})
+                    res.status(400).send({message: `Either '${req.params.folder_name}' was not found or `
+                    + `a note named '${req.params.note_name}' already exists under '${req.params.folder_name}.'`});
                 } else {
                     res.status(200).send();
                 }
-                
             };
         }
     );
@@ -110,7 +107,8 @@ app.post('/folders/:folder_name/:note_name', (req, res) => {
 
 app.delete('/folders/:folder_name/:note_name', (req, res) => {
     Folder.updateOne(
-        {name: req.params.folder_name},
+        {name: req.params.folder_name,
+},
         {$pull: {notes: {name: req.params.note_name}}},
         (err, dbResult) => {
             if (err) {res.status(500).send();}
