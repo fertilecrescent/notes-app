@@ -16,45 +16,15 @@ class NotesContainer {
     static display(folder_name) {
         this._notes.innerHTML = '';
         this._container.style.display = 'block';
-        Database.getNotesForFolder(folder_name).then(
-            (note_names) => {note_names.forEach(n => new Note(n).display())},
+        Database.getNotes(folder_name).then(
+            (res) => {res.note_names.forEach(n => new Note(res.folder_name, n).display())},
             (err) => console.log(err)
         );
     }
 }
 
-class Selection {
-
-    constructor() {
-        this._item = null;
-    }
-
-    isEmpty() {
-        return this._item === null
-    }
-
-    select(item) {
-        this.clear();
-        item._dom.classList.add('selected');
-        this._item = item;
-    }
-
-    clear() {
-        if (!this.isEmpty()) {
-            this._item._dom.classList.remove('selected');
-        }
-        this._item = null;
-    }
-
-    delete() {
-        this._item.delete();
-    }
-}
-
-Globals.selections = {
-    folder: new Selection(),
-    note: new Selection()
-}
+Globals['selectedFolder'] = null;
+Globals['selectedNote'] = null;
 
 class Database {
 
@@ -82,37 +52,58 @@ class Database {
         )
     };
 
-    static getNotesForFolder(folder_name) {
+    static deleteFolder(name) {
+        const options = {method: 'DELETE'};
+        return fetch(`${root}/folders/${name}`, options)
+        .then((res) => {
+                if (!res.ok) {return Promise.reject(new Error('Server error'))} 
+                else {return Promise.resolve()}
+            }, (err) => {
+                return Promise.reject(err);
+            }
+        );
+    };
+
+    static getNotes(folder_name) {
         const options = {method: 'GET'};
         return fetch(`${root}/folders/${folder_name}`, options)
         .then(async (res) => {
                 if (!res.ok) {
                     return Promise.reject(new Error(`Server error: status code ${res.status}`));
                 } else {
-                    return await res.json();
+                    const note_names = await res.json();
+                    return Promise.resolve({folder_name: folder_name, note_names: note_names});
                 }
             }, (err) => {return Promise.reject(err);}
         );
     }
 
-    static deleteFolder(name) {
+    static addNote(folder_name, note_name) {
+        const options = {method: 'POST'};
+        return fetch(`${root}/folders/${folder_name}/${note_name}`, options).then((res) => {
+            if (res.ok) {return Promise.resolve(note_name);}
+            else {return Promise.reject(new Error(`Server error: status code ${res.status}`))}
+        }, (err) => {
+            return Promise.reject(err);
+        });
+    }
+
+    static deleteNote(folder_name, note_name) {
         const options = {method: 'DELETE'};
-        return fetch(`${root}/folders/${name}`, options)
-        .then((res) => {
-                if (!res.ok) {
-                    return Promise.reject(new Error('Server error'))
-                };
+        return fetch(`${root}/folders/${folder_name}/${note_name}`, options).then(
+            (res) => {
+                if (!res.ok) {return Promise.reject(new Error(`Server error: status code ${res.status}`));}
+                else {return Promise.resolve();}
             }, (err) => {
-                return Promise.reject(err);
-            }
-        );
-    };
+                return Promise.reject(err)
+            });
+    }
 }
 
 class Folder {
 
     constructor(name) {
-        this._name = name;
+        this.name = name;
         this._container = document.getElementById('all-folders');
         this._dom = this._render();
     }
@@ -120,12 +111,12 @@ class Folder {
     _clickCallback() {
         return () => {
             if(!this._isSelected()) {
-                this._select();
-                NotesContainer.display(this._name);
+                this.select();
             } else {
-                console.log('no?')
-                Globals.selections.folder.clear();
-                NotesContainer.hide();
+                this.clearSelection();
+                if (Globals.selectedNote) {
+                    Globals.selectedNote.clearSelection();
+                }
             }
         }
     }
@@ -133,22 +124,33 @@ class Folder {
     _render() {
         const folder = document.createElement('div');
         folder.className = 'folder clickable';
-        folder.textContent = this._name;
-        folder.dataset['name'] = this._name;
+        folder.textContent = this.name;
+        folder.dataset['name'] = this.name;
         folder.addEventListener('click', this._clickCallback());
         return folder;
     }
 
     _isSelected() {
-        return Object.is(Globals.selections.folder._item, this);
+        return Object.is(Globals.selectedFolder, this);
     }
 
-    _select() {
-        Globals.selections.folder.select(this);
+    select() {
+        if (!this._isSelected()) {
+            if (Globals.selectedFolder) {
+                Globals.selectedFolder.clearSelection();
+            }
+            Globals.selectedFolder = this;
+            this._dom.classList.add('selected');
+            NotesContainer.display(this.name);
+        }
     }
 
-    _clearSelection() {
-        Globals.selections.folder.clear();
+    clearSelection() {
+        if (this._isSelected()) {
+            this._dom.classList.remove('selected');
+            Globals.selectedFolder = null;
+        };
+        NotesContainer.hide();
     }
 
     display() {
@@ -156,36 +158,77 @@ class Folder {
     }
 
     delete() {
-        Database.deleteFolder(this._name)
+        Database.deleteFolder(this.name)
         .then((res) => {
-                this._clearSelection();
+                this.clearSelection();
                 this._dom.remove();
                 NotesContainer.hide();
             }, (err) => {console.log(err);}
-        )
+        );
     }
-
 }
 
 class Note {
-    constructor(name) {
-        this._name = name;
+    constructor(folder_name, note_name) {
+        console.log(folder_name, note_name)
+        this.folder_name = folder_name;
+        this.name = note_name;
         this._body = null;
         this._container = document.getElementById('all-notes');
         this._dom = this._render();
     }
 
+    _clickCallback() {
+        return () => {
+            if(!this._isSelected()) {
+                this.select();
+            } else {
+                this.clearSelection();
+            }
+        }
+    }
+
     _render() {
         const note = document.createElement('div');
         note.className = 'note clickable';
-        note.textContent = this._name;
-        note.datalist['name'] = this._name;
-        // note.addEventListener('click', this._clickCallback());
+        note.textContent = this.name;
+        note.dataset['name'] = this.name;
+        note.addEventListener('click', this._clickCallback());
         return note;
+    }
+
+    _isSelected() {
+        return Object.is(Globals.selectedNote, this);
+    }
+
+    select() {
+        if (!this._isSelected()) {
+            if (Globals.selectedNote) {
+                Globals.selectedNote.clearSelection();
+            }
+            Globals.selectedNote = this;
+            this._dom.classList.add('selected');
+        }
+    }
+
+    clearSelection() {
+        if (this._isSelected()) {
+            this._dom.classList.remove('selected');
+            Globals.selectedNote = null;
+        };
     }
 
     display() {
         this._container.appendChild(this._dom);
+    }
+
+    delete() {
+        Database.deleteNote(this.folder_name, this.name)
+        .then((res) => {
+                this.clearSelection();
+                this._dom.remove();
+            }, (err) => {console.log(err);}
+        )
     }
 }
 
@@ -204,8 +247,8 @@ function enableClickables() {
 }
 
 document.getElementById('delete-folder-button').addEventListener('click', () => {
-    if (!Globals.selections.folder.isEmpty()) {
-        Globals.selections.folder.delete();
+    if (Globals.selectedFolder) {
+        Globals.selectedFolder.delete();
     };
 });
 
@@ -235,10 +278,54 @@ document.getElementById('add-folder-input').addEventListener('keyup', (event) =>
         }
         Database.addFolder(event.target.value)
         .then((name) => {
-                (new Folder(name)).display();
+                const newFolder = new Folder(name);
+                newFolder.select();
+                newFolder.display();
+                newFolder._dom.scrollIntoView({behavior: 'smooth'});
                 document.getElementById('add-folder-input').blur();
             }, (err) => {console.log(err);}
         );
+    };
+});
+
+document.getElementById('add-note-button').addEventListener('click', () => {
+    disableClickables();
+    const addNoteInput = document.getElementById('add-note-input');
+    addNoteInput.style.visibility = 'visible';
+    addNoteInput.focus();
+});
+
+document.getElementById('add-note-input').addEventListener('focusout', (event) => {
+    event.preventDefault();
+    enableClickables();
+    const addNoteInput = document.getElementById('add-note-input');
+    addNoteInput.value = '';
+    addNoteInput.style.visibility = 'hidden';
+});
+
+document.getElementById('add-note-input').addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+        for (var note of Array.from(document.getElementsByClassName('note'))) {
+            if (note.dataset.name === event.target.value) {
+                alert(`There is a already a note named '${event.target.value}.'`
+                + ' Please try again.')
+                return
+            }
+        }
+        Database.addNote(Globals.selectedFolder.name, event.target.value)
+        .then((name) => {
+                const newNote = new Note(Globals.selectedFolder.name, name);
+                newNote.select();
+                newNote.display();
+                document.getElementById('add-note-input').blur();
+            }, (err) => {console.log(err);}
+        );
+    };
+});
+
+document.getElementById('delete-note-button').addEventListener('click', (event) => {
+    if (Globals.selectedNote) {
+        Globals.selectedNote.delete();
     };
 });
 

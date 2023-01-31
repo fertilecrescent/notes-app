@@ -34,7 +34,7 @@
 
 ##### now it's time to work on notes!!! #####
 
--make a frontend for notes
+-(check) make a frontend for notes
     -(check) copy and paste the HTML for folders underneath itself, and "folder" in the attributes and class names with "note"
     -(note) apply the CSS from folders to notes
     -(check) pick and apply a fontawesome add-note icon
@@ -45,9 +45,15 @@
     -(check) make add-folder-button appear in the appropriate position while notes-container is active
     -(check) when a folder is selected, its notes should appear on the screen
         -when a folder receives a click event...call the GET folder/folder_name...for each item, make a note out of it and append it to notes-container...make notes container visible (.style.display = block;)
-    -if a user tries to add a note with a name that is already taken, display an appropriate error message
+    -(check) can select a note
+    -(check) can delete a note
+    -(check) can add a note
+    -(check) complete the Note class
+    -(check) add a note
+        -(check) add the ability to select a node
+    -(check) if a user tries to add a note with a name that is already taken, display an appropriate error message
 
--make a backend for notes
+-(check) make a backend for notes
     -(check) add a 'notes' field to the Folder schema
         -(check) do research about arrays in mongoose
         -(check) do research about strings in mongoose (do you have to set a length?)
@@ -69,14 +75,13 @@
     #but omg! it turns out that I get a 404 error for my static files when I do this...
         #yeah it's because the route used by express.static is relative to the calling directory.  you can combat this by using __dirname in the argument
 
-
 -(check) shouldn't need to refresh the server on changes to the backend or the browser on changes to the frontend
-    # npm install nodemon then use the 'nodemon' command instead of 'node' to run your server
-
+    #npm install nodemon then use the 'nodemon' command instead of 'node' to run your server
 -(check) do unique folder name validation on the frontend (and update the backend accordingly)
     -(check) need to prevent the add-note endpoint from even possibly being able to save notes with duplicate names to the same array
-
--DOM folders should really have a data-name property...we shouldn't be referring to their textContent to extract their name
+-(check) DOM folders should really have a data-name property...we shouldn't be referring to their textContent to extract their name
+-(check) after creating a folder (or note), it should be selected
+-(check) after creating a folder (or note), the container should scroll down (if it needs to) to show the new item
 
 -maybe delete button should change color when a folder is selected
 -css variables should only be in root if they're need at that level (otherwise put them in more specific rules)

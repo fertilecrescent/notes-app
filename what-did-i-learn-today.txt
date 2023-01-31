@@ -2,4 +2,5 @@
 I learned that concatenating strings can be a useful way of writing multiline string syntax.
 I increased my understanding of database queries.
 I learned that there is not a built in string method in javascript for capitalizing the first character of a string.
-I learned about HTML collections, things I had no idea about
+I learned about HTML collections, things I had no idea about.
+I learned that an HTML element has a scrollIntoView() function which behaves as you would expect based on the name.

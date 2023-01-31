@@ -107,12 +107,11 @@ app.post('/folders/:folder_name/:note_name', (req, res) => {
 
 app.delete('/folders/:folder_name/:note_name', (req, res) => {
     Folder.updateOne(
-        {name: req.params.folder_name,
-},
+        {name: req.params.folder_name},
         {$pull: {notes: {name: req.params.note_name}}},
         (err, dbResult) => {
             if (err) {res.status(500).send();}
-            else {res.status.send(200);}
+            else {res.status(200).send();}
         }
     )
 });
