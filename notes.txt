@@ -21,28 +21,14 @@ What's the difference between 'display: none;' and 'visibility: hidden;'?
 typeof() versus instanceof?
 ressearch modules on the frontend
 
---- SCRATCH PAD ---
-
-(check) While add-folder-input is active, I want all other clickable items to be effectively disabled.
-This means...
-
-    (check) clicking on add-folder-button should have no effect
-    (check) clicking on delete-folder-button should have no effect
-    (check) clicking on any folder should have no effect
-    (check) hovering over any of these elements should have no effect
-    (can you write code that prevents future cases, e.g. if we were to add more clickable elements?)
-
-    So...what we can do is assign a class name of 'clickable' to each of these elements.  When we activate add-folder-input, we can access these elements and remove their clickable properties (e.g. pointer on hover and click events)
-
-    It turns out pointer-events: none; is the declaration we were looking for
-    ...And it seems like add-folder-input is clickable because shows a pointer on hover, but...it doesn't have any registered 'click' callbacks, and it can't even be focused by clicking on it (becuase it's focused by default)
-    
-    So here's what we'll do
-        (check) give every clickable element (e.g. add-folder button, delete-folder-button, folder) a class name of clickable
-            NOTE: we already had a class of 'button' on the clickable icons which was basically serving the same purpose
-        (check) set a css rule on .clickable:hover with a cursor:pointer declaration
-        (check) edit add-folder-button's 'click' event call back so that it accesses .clickable, removes .clickable and adds .unclickable
-        (check) .unclickable should have a single declaration: pointer-events: none;
-        (check) add-folder-button should have a 'focusout' event that accesses .unclickable, removes .unclickable and adds .clickable
-    
+HTMLCollections are 'live' elements
+    They update along with the dom, so if I define one at the top of my script, it might have a different value at some later point, even if I never modified it (but did modify the DOM).  So document.getElementsByClassName('.folders') will hold all the folders currently in the dom, not all the folders at the time of calling the method.
+Who returns an HTMLCollection?
+    getElementsByClassName
+    getElementsByTagName
+    children
+HTMLCollections have an item() method, which means you can return an item from an index (and I think it also implies that you can use [index], for, and for/of)
+HTMLCollections do not(!) have a forEach method
+If you want to use forEach, or you want to require a frozen (i.e. not live) version of an HTMLCollection, convert it to an array using Array.from()
+You can not add or remove elements from an HTMLCollection
 

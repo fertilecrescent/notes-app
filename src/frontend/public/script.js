@@ -134,6 +134,7 @@ class Folder {
         const folder = document.createElement('div');
         folder.className = 'folder clickable';
         folder.textContent = this._name;
+        folder.dataset['name'] = this._name;
         folder.addEventListener('click', this._clickCallback());
         return folder;
     }
@@ -178,6 +179,7 @@ class Note {
         const note = document.createElement('div');
         note.className = 'note clickable';
         note.textContent = this._name;
+        note.datalist['name'] = this._name;
         // note.addEventListener('click', this._clickCallback());
         return note;
     }
@@ -224,6 +226,13 @@ document.getElementById('add-folder-input').addEventListener('focusout', (event)
 
 document.getElementById('add-folder-input').addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
+        for (var folder of Array.from(document.getElementsByClassName('folder'))) {
+            if (folder.dataset.name === event.target.value) {
+                alert(`There is a already a folder named '${event.target.value}.'`
+                + ' Please try again.')
+                return
+            }
+        }
         Database.addFolder(event.target.value)
         .then((name) => {
                 (new Folder(name)).display();
