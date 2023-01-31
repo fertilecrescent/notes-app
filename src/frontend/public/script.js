@@ -1,31 +1,57 @@
 
 const root = 'http://localhost:3000';
 
-class Selection {
+const Globals = {};
 
-    constructor() {
-        this.elem = null;
+class NotesContainer {
+
+    static _container = document.getElementById('notes-container');
+    static _notes = document.getElementById('all-notes');
+
+    static hide() {
+        this._notes.innerHTML = '';
+        this._container.style.display = 'none';
     }
 
-    _isEmpty() {
-        return this.elem === null
-    }
-
-    select(elem) {
-        this.clear();
-        elem.classList.add('selected');
-        this.elem = elem;
-    }
-
-    clear() {
-        if (!this._isEmpty()) {
-            this.elem.classList.remove('selected');
-        }
-        this.elem = null;
+    static display(folder_name) {
+        this._notes.innerHTML = '';
+        this._container.style.display = 'block';
+        Database.getNotesForFolder(folder_name).then(
+            (note_names) => {note_names.forEach(n => new Note(n).display())},
+            (err) => console.log(err)
+        );
     }
 }
 
-const selections = {
+class Selection {
+
+    constructor() {
+        this._item = null;
+    }
+
+    isEmpty() {
+        return this._item === null
+    }
+
+    select(item) {
+        this.clear();
+        item._dom.classList.add('selected');
+        this._item = item;
+    }
+
+    clear() {
+        if (!this.isEmpty()) {
+            this._item._dom.classList.remove('selected');
+        }
+        this._item = null;
+    }
+
+    delete() {
+        this._item.delete();
+    }
+}
+
+Globals.selections = {
     folder: new Selection(),
     note: new Selection()
 }
@@ -33,66 +59,50 @@ const selections = {
 class Database {
 
     static getAllFolders() {
-        return fetch(`${root}/folders/`).then(
-            async (res) => {
+        return fetch(`${root}/folders/`)
+        .then(async (res) => {
                 if (!res.ok) {
-                    Promise.reject(new Error('Server error'));
+                    Promise.reject(new Error(`Server error: status code ${res.status}`));
                 } else {
                     return await res.json();
                 };
-            }, 
-            (err) => {
-                Promise.reject(err);
-            }
+            }, (err) => {return Promise.reject(err);}
         );
     };
 
     static addFolder(name) {
-        return fetch(`${root}/folders/${name}`, {method: 'POST'}).then(
-            async (res) => {
+        return fetch(`${root}/folders/${name}`, {method: 'POST'})
+        .then((res) => {
                 if (!res.ok) {
-                    if (res.status === 400) {
-                        var message = (await res.json()).message
-                        alert(message);
-                        return Promise.reject(new Error(message));
-                    } else {
-                        return Promise.reject(new Error('Server errror'));
-                    }
-                } else {
-                    return Promise.resolve(name);
-                }
-            },
-            (err) => {
-                return Promise.reject(err);
-            }
+                    return Promise.reject(
+                        new Error(`Server error: status code ${res.status}`)
+                    );
+                } else {return Promise.resolve(name);}
+            }, (err) => {return Promise.reject(err);}
         )
     };
 
     static getNotesForFolder(folder_name) {
         const options = {method: 'GET'};
-        return fetch(`${root}/folders/${folder_name}`, options).then(
-            async (res) => {
+        return fetch(`${root}/folders/${folder_name}`, options)
+        .then(async (res) => {
                 if (!res.ok) {
-                    Promise.reject(new Error('Server error'));
+                    return Promise.reject(new Error(`Server error: status code ${res.status}`));
                 } else {
                     return await res.json();
                 }
-            },
-            (err) => {
-                Promise.reject(err);
-            }
+            }, (err) => {return Promise.reject(err);}
         );
     }
 
-    static deleteSelectedFolder() {
+    static deleteFolder(name) {
         const options = {method: 'DELETE'};
-        return fetch(`${root}/folders/${Globals.selectedFolder.textContent}`, options).then(
-            (res) => {
+        return fetch(`${root}/folders/${name}`, options)
+        .then((res) => {
                 if (!res.ok) {
                     return Promise.reject(new Error('Server error'))
                 };
-            }, 
-            (err) => {
+            }, (err) => {
                 return Promise.reject(err);
             }
         );
@@ -104,24 +114,23 @@ class Folder {
     constructor(name) {
         this._name = name;
         this._container = document.getElementById('all-folders');
-        this._dom = this._makeDom();
+        this._dom = this._render();
     }
 
     _clickCallback() {
         return () => {
-            selections.folder.select(this._dom);
-            Database.getNotesForFolder(this._name).then(
-                (names) => {
-                    console.log(names)
-                },
-                (err) => {
-                    console.log(err);
-                }
-            )
+            if(!this._isSelected()) {
+                this._select();
+                NotesContainer.display(this._name);
+            } else {
+                console.log('no?')
+                Globals.selections.folder.clear();
+                NotesContainer.hide();
+            }
         }
     }
 
-    _makeDom() {
+    _render() {
         const folder = document.createElement('div');
         folder.className = 'folder clickable';
         folder.textContent = this._name;
@@ -129,16 +138,52 @@ class Folder {
         return folder;
     }
 
+    _isSelected() {
+        return Object.is(Globals.selections.folder._item, this);
+    }
+
+    _select() {
+        Globals.selections.folder.select(this);
+    }
+
+    _clearSelection() {
+        Globals.selections.folder.clear();
+    }
+
     display() {
         this._container.appendChild(this._dom);
     }
 
-    select() {
-        if (Globals.selectedFolder) {
-            Globals.selectedFolder.classList.remove('selected');
-        };
-        this._dom.classList.add('selected');
-        Globals.selectedFolder = this._dom;
+    delete() {
+        Database.deleteFolder(this._name)
+        .then((res) => {
+                this._clearSelection();
+                this._dom.remove();
+                NotesContainer.hide();
+            }, (err) => {console.log(err);}
+        )
+    }
+
+}
+
+class Note {
+    constructor(name) {
+        this._name = name;
+        this._body = null;
+        this._container = document.getElementById('all-notes');
+        this._dom = this._render();
+    }
+
+    _render() {
+        const note = document.createElement('div');
+        note.className = 'note clickable';
+        note.textContent = this._name;
+        // note.addEventListener('click', this._clickCallback());
+        return note;
+    }
+
+    display() {
+        this._container.appendChild(this._dom);
     }
 }
 
@@ -157,11 +202,8 @@ function enableClickables() {
 }
 
 document.getElementById('delete-folder-button').addEventListener('click', () => {
-    if (Selectables.folder.isSelected()) {
-        Database.deleteSelectedFolder().then(
-            (res) => Display.removeSelectedFolder(),
-            (err) => {console.log(err)}
-        );
+    if (!Globals.selections.folder.isEmpty()) {
+        Globals.selections.folder.delete();
     };
 });
 
@@ -183,24 +225,16 @@ document.getElementById('add-folder-input').addEventListener('focusout', (event)
 document.getElementById('add-folder-input').addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
         Database.addFolder(event.target.value)
-        .then(
-            (name) => {
-                console.log(name);
-                Display.displayFolder(name);
+        .then((name) => {
+                (new Folder(name)).display();
                 document.getElementById('add-folder-input').blur();
-            },
-            (err) => {
-                console.log(err)
-            }
+            }, (err) => {console.log(err);}
         );
     };
 });
 
-Database.getAllFolders().then(
-    (names) => {
+Database.getAllFolders()
+.then((names) => {
         names.forEach(n => (new Folder(n)).display());
-    },
-    (err) => {
-        console.log(err);
-    }
+    }, (err) => {console.log(err);}
 );

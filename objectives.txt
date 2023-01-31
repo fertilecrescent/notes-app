@@ -43,7 +43,7 @@
         -(check) make content container's width be half the size of the screen + half the width of notes container (which is the same as the width of folders container)
         -(check) make it a flex box and justify content to the right
     -(check) make add-folder-button appear in the appropriate position while notes-container is active
-    -when a folder is selected, its notes should appear on the screen
+    -(check) when a folder is selected, its notes should appear on the screen
         -when a folder receives a click event...call the GET folder/folder_name...for each item, make a note out of it and append it to notes-container...make notes container visible (.style.display = block;)
     -if a user tries to add a note with a name that is already taken, display an appropriate error message
 
@@ -73,7 +73,8 @@
 
 -(check) shouldn't need to refresh the server on changes to the backend or the browser on changes to the frontend
     # npm install nodemon then use the 'nodemon' command instead of 'node' to run your server
--do unique folder name validation on the frontend
+
+-do unique folder name validation on the frontend (and update the backend accordingly)
 
 -maybe delete button should change color when a folder is selected
 -css variables should only be in root if they're need at that level (otherwise put them in more specific rules)

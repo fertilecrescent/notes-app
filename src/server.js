@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const Folder = require('./models/Folder.js');
 const connectToDB = require('./utils/connectToDB.js');
+const { response } = require('express');
 
 mongoose.set('strictQuery', false); // to avoid a warning and prepare for update
 connectToDB();
@@ -13,8 +14,19 @@ app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/frontend/index.html`);
 });
 
+app.get('/all-data', (req, res) => {
+    Folder.find({}).then(
+        (folders) => {
+            res.json(folders);
+        }, 
+        (err) => {
+            res.status(500).send();
+        }
+    )
+});
+
 app.get('/folders', (req, res) => {
-    Folder.find({}).exec().then(
+    Folder.find({}).then(
         (folders) => {
             res.json(folders.map(folder => folder.name));
         },
@@ -29,7 +41,7 @@ app.post('/folders/:folder_name', (req, res) => {
     folder.save((err) => {
         if (err) {
             if (err.code === 11000) {
-                var message = `A folder named '${req.params.name}' already exists`
+                var message = `A folder named '${req.params.folder_name}' already exists`
                 res.status(400);
                 res.send({'message': message});
             } else {
@@ -42,7 +54,7 @@ app.post('/folders/:folder_name', (req, res) => {
 });
 
 app.delete('/folders', (req, res) => {
-    Folder.deleteMany({}).exec().then(
+    Folder.deleteMany({}).then(
         undefined,
         (err) => {
             res.status(500).send();
@@ -51,8 +63,8 @@ app.delete('/folders', (req, res) => {
 });
 
 app.delete('/folders/:folder_name', (req, res) => {
-    Folder.deleteOne({name: req.params.folder_name}).exec().then(
-        (result) => {
+    Folder.deleteOne({name: req.params.folder_name}).then(
+        (dbResult) => {
             res.status(200).send();
         }, 
         (err) => {
@@ -64,8 +76,8 @@ app.delete('/folders/:folder_name', (req, res) => {
 app.get('/folders/:folder_name', (req, res) => {
     // TODO: set the result argument of other query arguments to literally be 'result' as to stay consistent
     Folder.findOne({name: req.params.folder_name}).then(
-        (result) => {
-            res.json(result.notes.map((note) => note.name));
+        (dbResult) => {
+            res.json(dbResult.notes.map((note) => note.name));
         },
         (err) => {
             res.status(500).send();
@@ -75,17 +87,22 @@ app.get('/folders/:folder_name', (req, res) => {
 
 app.post('/folders/:folder_name/:note_name', (req, res) => {
     Folder.updateOne(
-        {name: req.params.folder_name,
-        notes: {$not: {$elemMatch: {name: req.params.note_name}}}
-        },
+        {name: req.params.folder_name},
         {$push: {notes: {name: req.params.note_name}}},
-        (err, result) => {
+        (err, dbResult) => {
             console.log(err, 'err');
-            console.log(result, 'result');
+            console.log(dbResult, 'result');
             if (err) {
                 res.status(500).send();
             } else {
-                res.status(200).send();
+                if (dbResult.matchedCount === 0) {
+                    res
+                    .status(400)
+                    .send({message: `There are no folders name ${req.params.folder_name}. Try again.`})
+                } else {
+                    res.status(200).send();
+                }
+                
             };
         }
     );
@@ -95,7 +112,7 @@ app.delete('/folders/:folder_name/:note_name', (req, res) => {
     Folder.updateOne(
         {name: req.params.folder_name},
         {$pull: {notes: {name: req.params.note_name}}},
-        (err, updateRes) => {
+        (err, dbResult) => {
             if (err) {res.status(500).send();}
             else {res.status.send(200);}
         }
