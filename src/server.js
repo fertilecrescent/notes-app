@@ -36,12 +36,12 @@ app.get('/folders', (req, res) => {
     );
 });
 
-app.post('/folders/:folder_name', (req, res) => {
-    const folder = new Folder({name: req.params.folder_name});
+app.post('/:folder', (req, res) => {
+    const folder = new Folder({name: req.params.folder});
     folder.save((err) => {
         if (err) {
             if (err.code === 11000) {
-                var message = `A folder named '${req.params.folder_name}' already exists`
+                var message = `A folder named '${req.params.folder}' already exists`
                 res.status(400);
                 res.send({'message': message});
             } else {
@@ -53,7 +53,7 @@ app.post('/folders/:folder_name', (req, res) => {
     })
 });
 
-app.delete('/folders', (req, res) => {
+app.delete('/', (req, res) => {
     Folder.deleteMany({}).then(
         undefined,
         (err) => {
@@ -62,8 +62,8 @@ app.delete('/folders', (req, res) => {
     );
 });
 
-app.delete('/folders/:folder_name', (req, res) => {
-    Folder.deleteOne({name: req.params.folder_name}).then(
+app.delete('/:folder', (req, res) => {
+    Folder.deleteOne({name: req.params.folder}).then(
         (dbResult) => {
             res.status(200).send();
         }, 
@@ -73,11 +73,14 @@ app.delete('/folders/:folder_name', (req, res) => {
     );
 });
 
-app.get('/folders/:folder_name', (req, res) => {
+app.get('/:folder', (req, res) => {
     // TODO: set the result argument of other query arguments to literally be 'result' as to stay consistent
-    Folder.findOne({name: req.params.folder_name}).then(
+    Folder.findOne({name: req.params.folder}).then(
         (dbResult) => {
-            res.json(dbResult.notes.map((note) => note.name));
+            console.log(dbResult.notes.map((note) => {return {'name': note.name, 'body': note.body}}))
+            res.json(dbResult.notes.map((note) => {
+                return {'name': note.name, 'body': note.body}
+            }));
         },
         (err) => {
             res.status(500).send();
@@ -85,18 +88,18 @@ app.get('/folders/:folder_name', (req, res) => {
     );
 });
 
-app.post('/folders/:folder_name/:note_name', (req, res) => {
+app.post('/:folder/:note', (req, res) => {
     Folder.updateOne(
-        {name: req.params.folder_name,
-        notes: {$not: {$elemMatch: {name: req.params.note_name}}}}, // should be unique
-        {$push: {notes: {name: req.params.note_name}}},
+        {name: req.params.folder,
+        notes: {$not: {$elemMatch: {name: req.params.note}}}}, // should be unique
+        {$push: {notes: {name: req.params.note}}},
         (err, dbResult) => {
             if (err) {
                 res.status(500).send();
             } else {
                 if (dbResult.matchedCount === 0) {
-                    res.status(400).send({message: `Either '${req.params.folder_name}' was not found or `
-                    + `a note named '${req.params.note_name}' already exists under '${req.params.folder_name}.'`});
+                    res.status(400).send({message: `Either '${req.params.folder}' was not found or `
+                    + `a note named '${req.params.note}' already exists under '${req.params.folder}.'`});
                 } else {
                     res.status(200).send();
                 }
@@ -105,10 +108,35 @@ app.post('/folders/:folder_name/:note_name', (req, res) => {
     );
 });
 
-app.delete('/folders/:folder_name/:note_name', (req, res) => {
+app.put('/:folder/:note', (req, res) => {
+    console.log('yeasefawfe')
+    console.log(req.query.body)
     Folder.updateOne(
-        {name: req.params.folder_name},
-        {$pull: {notes: {name: req.params.note_name}}},
+        {name: req.params.folder, 'notes.name': req.params.note},
+        {$set: {'notes.$.body': req.query.body}},
+        (err, dbResult) => {
+            if (dbResult) {
+                console.log(dbResult, )
+                if (dbResult.matchedCount === 1) {
+                    res.status(200).send();
+                } else {
+                    res.status(400).send({message: `There is no folder name ${req.params.folder} ` + 
+                    `with a note named ${req.params.note}. Please try again.`})
+                }
+            }
+            else {
+                console.log('yes')
+                console.log(err);
+                res.status(500).send();
+            }
+        }
+    );
+});
+
+app.delete('/:folder/:note', (req, res) => {
+    Folder.updateOne(
+        {name: req.params.folder},
+        {$pull: {notes: {name: req.params.note}}},
         (err, dbResult) => {
             if (err) {res.status(500).send();}
             else {res.status(200).send();}

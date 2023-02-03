@@ -29,6 +29,11 @@ body {
 }
 
 #content-container {
+    width: 100%;
+    display: flex;
+}
+
+#folders-notes-container {
     display: flex;
     width: calc(50% + var(--column-width)/2 + var(--container-margin));
     justify-content: right;
@@ -37,6 +42,7 @@ body {
 #folders-container, #notes-container {
     position: relative;
     margin: var(--container-margin);
+    width: var(--column-width);
 }
 
 #notes-container {
@@ -45,14 +51,13 @@ body {
 
 #all-folders, #all-notes {
     box-sizing: border-box;
-    width: var(--column-width);
+    width: 100%;
     height: var(--column-height);
     overflow-y: scroll;
     overflow-x: hidden;
     border: 1.5px solid var(--purple);
     border-radius: var(--border-radius);
     background-color: var(--light-purple);
-    
 }
 
 .folder, .note {
@@ -61,7 +66,7 @@ body {
     align-items: center;
     text-align: center;
     box-sizing: border-box;
-    width: var(--column-width);
+    width: 100%;
     height: var(--item-height);
     color: var(--font-color);
     background-color: var(--green);
@@ -107,6 +112,12 @@ body {
     color: var(--purple);
 }
 
+#add-folder-button:hover, #add-note-button:hover,
+#delete-folder-button:hover, #delete-note-button:hover 
+{
+    opacity: 70%;
+}
+
 #add-folder-input, #add-note-input {
     position: absolute;
     --width: 280px;
@@ -144,3 +155,47 @@ body {
 input:hover {
     cursor: pointer;
 }
+
+#text-area {
+    box-sizing: border-box;
+    display: none;
+    width: var(--column-width);
+    height: var(--column-height);
+    border-radius: var(--border-radius);
+    margin: var(--container-margin);
+    resize: both;
+    font-size: 14px;
+    font-family: monospace;
+    padding: var(--item-padding);
+}
+
+#text-area:focus {
+    border: none;
+}
+
+@keyframes spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+}
+
+.spinner {
+    --width: calc(var(--column-width)/4);
+    --height: var(--width);
+    width: var(--width);
+    height: var(--height);
+    position: absolute;
+    top: calc(var(--column-height)/2 - var(--height)/2);
+    left: calc(var(--column-width)/2 - var(--width)/2);
+    border-radius: 100%;
+    border-top: 7px solid var(--dark-green);
+    border-right: 7px solid var(--dark-green);
+    border-bottom: 7px solid var(--dark-green);
+    border-left: 7px solid var(--purple);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.503);
+    animation-name: spin;
+    animation-duration: .8s;
+    animation-delay: .3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+

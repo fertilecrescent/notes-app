@@ -44,7 +44,7 @@
         -(check) make it a flex box and justify content to the right
     -(check) make add-folder-button appear in the appropriate position while notes-container is active
     -(check) when a folder is selected, its notes should appear on the screen
-        -when a folder receives a click event...call the GET folder/folder_name...for each item, make a note out of it and append it to notes-container...make notes container visible (.style.display = block;)
+        -(check) when a folder receives a click event...call the GET folder/folder_name...for each item, make a note out of it and append it to notes-container...make notes container visible (.style.display = block;)
     -(check) can select a note
     -(check) can delete a note
     -(check) can add a note
@@ -83,11 +83,20 @@
 -(check) after creating a folder (or note), it should be selected
 -(check) after creating a folder (or note), the container should scroll down (if it needs to) to show the new item
 
--maybe delete button should change color when a folder is selected
--css variables should only be in root if they're need at that level (otherwise put them in more specific rules)
+-(check) we want text area to appear on the right half of the screen
+-(check) after selecting a note, we should see a textarea
+-(check) after deselecting a note, the text area should hide
+
+-(check) Database needs a method for updating a note's body
+-(check) Database should return notes' bodies when fetching them
+-(check) We need to include 'body' when constructing new notes
+
+-(check) When the textarea loses focus, the corresponding notes object and it's database value should update
+-(check) sometimes it takes a while to retrieve something from the db...should display a loading animation in the meantime
+
+
+
+-I want folders to have their own getNotes method
 -testing
--alternate stylesheets
--if a note name is not provided, display thee first n characters in the item display
--maybe display an appropriate error message if font-awesome fails due to page view limit
 -research unique indexes more in depth
 -organize the routes

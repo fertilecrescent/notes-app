@@ -7,3 +7,5 @@ Does that object have a forEach method?
 Can you iterate through that object?
 How do you convert that object to an array?
 Explain what a live object is.
+
+What option do you pass to element.scrollIntoView() to make the scroll animated?
