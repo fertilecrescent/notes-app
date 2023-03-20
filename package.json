@@ -12,7 +12,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "nodemon ./src/server.js"
+    "start": "nodemon ./src/server.js",
+    "clearDB": "node ./src/utils/clearDB.js"
   },
   "repository": {
     "type": "git",

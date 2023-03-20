@@ -1,1 +1,0 @@
-Fill in background on folders-box when there are not enough folders to take up the entire space

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/0bce330674.js" crossorigin="anonymous"></script>
+    <title>Notes</title>
+</head>
+<body>
+    <div id="content-container">
+        <div id="folders-notes-container"">
+            <div id="folders-container">
+                <div id="all-folders">
+                    
+                </div>
+                <div id="folder-buttons">
+                    <i id="add-folder-button" class="fa-solid fa-folder-plus fa-xl clickable"></i>
+                    <i id="delete-folder-button" class="fa-solid fa-folder-minus fa-xl clickable"></i>
+                </div>
+                <input id="add-folder-input" placeholder="new folder">
+            </div>
+            <div id="notes-container">
+                <div id="all-notes">
+    
+                </div>
+                <div id="note-buttons">
+                    <i class="fa-solid fa-message-plus"></i>
+                    <i id="add-note-button" class="fa-solid fa-square-plus fa-xl clickable"></i>
+                    <i id="delete-note-button" class="fa-solid fa-square-minus fa-xl clickable"></i>
+                </div>
+                <input id="add-note-input" placeholder="new note">
+            </div>
+        </div>
+        <div id="text-area-container">
+            <textarea id="text-area"></textarea>
+        </div>
+    </div>
+</body>
+<script src="script.js"></script>
+</html>

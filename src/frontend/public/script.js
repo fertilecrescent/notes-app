@@ -28,6 +28,14 @@ function makeSpinner() {
     return spinner;
 };
 
+function handleNetworkError(err) {
+    if (err.startsWith('Server error')) {
+        alert('There was a problem on the server')
+    } else {
+        alert('There was a problem connecting to the server')
+    }
+}
+
 class NotesController {
 
     static _container = document.getElementById('notes-container');
@@ -79,11 +87,11 @@ class Database {
 
     static getAllFolders() {
         Globals.awaitingServer = true;
-        return fetch(`${root}/folders`)
+        return fetch(`/folders`)
         .then(async (res) => {
                 if (!res.ok) {
                     Globals.awaitingServer = false;
-                    Promise.reject(new Error(`Server error: status code ${res.status}`));
+                    return Promise.reject(new Error(`Server error: status code ${res.status}`));
                 } else {
                     const folders = await res.json();
                     Globals.awaitingServer = false;
@@ -94,7 +102,7 @@ class Database {
     };
 
     static addFolder(name) {
-        return fetch(`${root}/${name}`, {method: 'POST'})
+        return fetch(`/${name}`, {method: 'POST'})
         .then((res) => {
                 if (!res.ok) {
                     return Promise.reject(
@@ -107,7 +115,7 @@ class Database {
 
     static deleteFolder(name) {
         const options = {method: 'DELETE'};
-        return fetch(`${root}/${name}`, options)
+        return fetch(`/${name}`, options)
         .then((res) => {
                 if (!res.ok) {return Promise.reject(new Error('Server error'))} 
                 else {return Promise.resolve()}
@@ -120,7 +128,7 @@ class Database {
     static getNotes(folder) {
         const options = {method: 'GET'};
         Globals.awaitingServer = true;
-        return fetch(`${root}/${folder}`, options)
+        return fetch(`/${folder}`, options)
         .then(async (res) => {
                 if (!res.ok) {
                     Globals.awaitingServer = false
@@ -139,24 +147,32 @@ class Database {
 
     static addNote(folder, note) {
         const options = {method: 'POST'};
-        return fetch(`${root}/${folder}/${note}`, options).then((res) => {
+        return fetch(`/${folder}/${note}`, options)
+        .then((res) => {
             if (res.ok) {return Promise.resolve(note);}
             else {return Promise.reject(new Error(`Server error: status code ${res.status}`))}
         }, (err) => {return Promise.reject(err);});
     }
 
     static updateNote(folder, note, body) {
-        const options = {method: 'PUT'};
-        return fetch(`${root}/${folder}/${note}?` + new URLSearchParams({body: body}), options).then(async (res) => {
+        const options = {
+            method: 'PUT',
+            body: JSON.stringify({'noteBody': body}),
+            headers: {'content-type': 'application/json'}
+        };
+        // return fetch(`/${folder}/${note}?` + new URLSearchParams({body: body}), options)
+        return fetch(`/${folder}/${note}`, options)
+        .then(async (res) => {
             if (res.ok) {
                 return Promise.resolve();
             } else {return Promise.reject(new Error(`Server error: status code ${res.status}`))}
-        }, (err) => {console.log('fetch failed updating note');return Promise.reject(err)});
+        }, (err) => {return Promise.reject(err)});
     };
 
     static deleteNote(folder, note) {
         const options = {method: 'DELETE'};
-        return fetch(`${root}/${folder}/${note}`, options).then(
+        return fetch(`/${folder}/${note}`, options)
+        .then(
             (res) => {
                 if (!res.ok) {return Promise.reject(new Error(`Server error: status code ${res.status}`));}
                 else {return Promise.resolve();}
@@ -227,7 +243,7 @@ class Folder {
                 this.clearSelection();
                 this._dom.remove();
                 NotesController.hide();
-            }, (err) => {console.log(err);}
+            }, (err) => {handleNetworkError(err);}
         );
     };
 }
@@ -268,7 +284,6 @@ class Note {
         if (Globals.selectedNote) {Globals.selectedNote.clearSelection();}
         Globals.selectedNote = this;
         this._dom.classList.add('selected');
-        console.log(this._body, 'body');
         TextController.display(this._body);
     }
 
@@ -291,7 +306,7 @@ class Note {
         .then((res) => {
                 this.clearSelection();
                 this._dom.remove();
-            }, (err) => {console.log(err);}
+            }, (err) => {handleNetworkError(err);}
         )
     }
 }
@@ -347,7 +362,7 @@ document.getElementById('add-folder-input').addEventListener('keyup', (event) =>
                 newFolder.display();
                 newFolder.scrollIntoView();
                 document.getElementById('add-folder-input').blur();
-            }, (err) => {console.log(err);}
+            }, (err) => {handleNetworkError(err);}
         );
     };
 });
@@ -369,8 +384,10 @@ document.getElementById('add-note-input').addEventListener('focusout', (event) =
 
 document.getElementById('add-note-input').addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
-        for (let note of Array.from(document.getElementsByClassName('note'))) {
-            if (note.dataset.name === event.target.value) {
+        const proposedNoteName = event.target.value
+        const notes = Array.from(document.getElementsByClassName('note'))
+        for (let n of notes) {
+            if (n.dataset.name === proposedNoteName) {
                 alert(`There is a already a note named '${event.target.value}.'`
                 + ' Please try again.')
                 return
@@ -378,12 +395,12 @@ document.getElementById('add-note-input').addEventListener('keyup', (event) => {
         }
         Database.addNote(Globals.selectedFolder.name, event.target.value)
         .then((name) => {
-                const newNote = new Note(Globals.selectedFolder.name, name);
+                const newNote = new Note(Globals.selectedFolder.name, name, '');
                 newNote.select();
                 newNote.display();
                 newNote.scrollIntoView();
-                document.getElementById('add-note-input').blur();
-            }, (err) => {console.log(err);}
+                document.getElementById('add-note-input').blur(); // effectively closes the input dialogue
+            }, (err) => {handleNetworkError(err);}
         );
     };
 });
@@ -404,6 +421,6 @@ setTimeout(() => {
     .then((names) => {
             removeSpinner(document.getElementById('all-folders'));
             names.forEach(n => (new Folder(n)).display());
-        }, (err) => {console.log(err);}
+        }, (err) => {handleNetworkError(err);}
     );
 });

@@ -4,10 +4,10 @@ const Folder = require('./models/Folder.js');
 const connectToDB = require('./utils/connectToDB.js');
 const { response } = require('express');
 
-mongoose.set('strictQuery', false); // to avoid a warning and prepare for update
-connectToDB();
+mongoose.set('strictQuery', false);
 
 const app = express();
+app.use(express.json())
 app.use(express.static(`${__dirname}/frontend/public`));
 
 app.get('/', (req, res) => {
@@ -74,10 +74,8 @@ app.delete('/:folder', (req, res) => {
 });
 
 app.get('/:folder', (req, res) => {
-    // TODO: set the result argument of other query arguments to literally be 'result' as to stay consistent
     Folder.findOne({name: req.params.folder}).then(
         (dbResult) => {
-            console.log(dbResult.notes.map((note) => {return {'name': note.name, 'body': note.body}}))
             res.json(dbResult.notes.map((note) => {
                 return {'name': note.name, 'body': note.body}
             }));
@@ -109,14 +107,14 @@ app.post('/:folder/:note', (req, res) => {
 });
 
 app.put('/:folder/:note', (req, res) => {
-    console.log('yeasefawfe')
-    console.log(req.query.body)
+    console.log(req.body, 'req.body')
+    const { noteBody } = req.body
+
     Folder.updateOne(
         {name: req.params.folder, 'notes.name': req.params.note},
-        {$set: {'notes.$.body': req.query.body}},
+        {$set: {'notes.$.body': noteBody}},
         (err, dbResult) => {
             if (dbResult) {
-                console.log(dbResult, )
                 if (dbResult.matchedCount === 1) {
                     res.status(200).send();
                 } else {
@@ -125,8 +123,6 @@ app.put('/:folder/:note', (req, res) => {
                 }
             }
             else {
-                console.log('yes')
-                console.log(err);
                 res.status(500).send();
             }
         }
@@ -144,4 +140,9 @@ app.delete('/:folder/:note', (req, res) => {
     )
 });
 
-app.listen(3000, () => console.log('listening'));
+const PORT = 3000
+connectToDB().then(() => {
+    app.listen(3000, async () => {
+        const folders = await Folder.find({})
+    });
+})
