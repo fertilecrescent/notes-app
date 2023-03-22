@@ -1,7 +1,7 @@
 // -- USERS HAVEN'T BEEN IMPLEMENTED YET --
 
 
-// const mongoose = require('mongoose');
+// const mongoose = require('mongoose')
 
 // const userSchema = mongoose.Schema({
 //     name: String,
@@ -26,10 +26,10 @@
 
 // userSchema.pre('deleteOne', (next) => {
 //     Folder.deleteMany({id: {$in: this.folders}}).then((_, err) => {
-//         if (err) { next(err); }
-//         else { next(); };
-//     });
-// });
+//         if (err) { next(err) }
+//         else { next() }
+//     })
+// })
 
-// const User = mongoose.model('User', userSchema);
-// module.exports = User;
+// const User = mongoose.model('User', userSchema)
+// module.exports = User

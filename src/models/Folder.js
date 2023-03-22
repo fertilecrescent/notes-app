@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require('mongoose')
 
 const noteSchema = new Schema({
     name: {
@@ -8,7 +8,7 @@ const noteSchema = new Schema({
         type: String,
         default: ''
     }
-});
+})
 
 const folderSchema = new Schema({
     name: {
@@ -20,6 +20,6 @@ const folderSchema = new Schema({
         type: [noteSchema],
         default: []
     }
-});
+})
 
-module.exports = new model('Folder', folderSchema);
+module.exports = new model('Folder', folderSchema)

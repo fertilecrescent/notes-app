@@ -2,3 +2,4 @@
 *.txt
 notes
 src/routers
+src/models/user.js
