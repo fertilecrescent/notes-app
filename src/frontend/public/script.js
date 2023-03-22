@@ -2,7 +2,10 @@
 const root = 'http://localhost:3000';
 
 const Globals = {
-    awaitingServer: false
+    selectedFolder: null,
+    selectedNote: null,
+    awaitingServer: false,
+    contentEdited: false
 };
 
 function addSpinner(elem) {
@@ -65,12 +68,11 @@ class TextController {
 
     static _container = document.getElementById('text-area');
 
-    static async clear() {
+    static async saveValue() {
         Database.updateNote(Globals.selectedFolder.name, Globals.selectedNote.name, this._container.value);
-    };
+    }
 
     static hide() {
-        this.clear();
         this._container.style.display = 'none';
     };
 
@@ -78,10 +80,12 @@ class TextController {
         this._container.value = body;
         this._container.style.display = 'block';
     };
+
+    static focus() {
+        this._container.focus()
+    }
 };
 
-Globals['selectedFolder'] = null;
-Globals['selectedNote'] = null;
 
 class Database {
 
@@ -155,6 +159,7 @@ class Database {
     }
 
     static updateNote(folder, note, body) {
+        console.log('updating note')
         const options = {
             method: 'PUT',
             body: JSON.stringify({'noteBody': body}),
@@ -348,7 +353,8 @@ document.getElementById('add-folder-input').addEventListener('focusout', (event)
 
 document.getElementById('add-folder-input').addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
-        for (let folder of Array.from(document.getElementsByClassName('folder'))) {
+        const all_folders = Array.from(document.getElementsByClassName('folder'))
+        for (let folder of all_folders) {
             if (folder.dataset.name === event.target.value) {
                 alert(`There is a already a folder named '${event.target.value}.'`
                 + ' Please try again.')
@@ -397,6 +403,7 @@ document.getElementById('add-note-input').addEventListener('keyup', (event) => {
         .then((name) => {
                 const newNote = new Note(Globals.selectedFolder.name, name, '');
                 newNote.select();
+                TextController.focus()
                 newNote.display();
                 newNote.scrollIntoView();
                 document.getElementById('add-note-input').blur(); // effectively closes the input dialogue
@@ -411,8 +418,11 @@ document.getElementById('delete-note-button').addEventListener('click', (event) 
     };
 });
 
-document.getElementById('text-area').addEventListener('change', (event) => {
+document.getElementById('text-area').addEventListener('change', async (event) => {
     Globals.selectedNote._body = event.currentTarget.value;
+    Globals.contentEdited = true
+    console.log('about to save')
+    TextController.saveValue()
 });
 
 addSpinner(document.getElementById('all-folders'));
