@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const Folder = require('../models/Folder.js')
 const connectToDB = require('../utils/connectToDB.js');
 
