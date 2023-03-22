@@ -23,7 +23,7 @@ You can now begin editing the content of your note.
 ![the text area for editing the content of a note. it's blank in this case](/demo-images/begin_typing.png)
 
 If you navigate elsewhere within the app (e.g. to another note, or another folder) then the contents of this text area will be saved.
-They also will be saved if you hit the <Enter>
+They also will be saved if you hit the \<Enter\> key
 
 
 
