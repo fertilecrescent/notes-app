@@ -25,6 +25,24 @@ You can now begin editing the content of your note.
 If you navigate elsewhere within the app (e.g. to another note, or another folder) then the contents of this text area will be saved.
 They also will be saved if you hit the \<Enter\> key
 
+Clicking on a folder will display its notes
+
+![the contents of a folder (a list of notes)](/demo-images/folder.png)
+
+Clicking on a note will display its contents
+
+![the contents of a note (in a text area)](/demo-images/note.png)
+
+The editor can be resized
+
+![the contents of a note, but the text area is larger this time](/demo-images/content_resized.png)
+
+You can delete notes and folders by clicking on them then selecting their respective "minus" icons
+
+
+
+
+
 
 
 
