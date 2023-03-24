@@ -1,6 +1,5 @@
 # notes-app
-A CRUD web app for taking notes, similar to the notes app on iPhone
-
+A fullstack node.js web app for taking notes
 
 ## Demonstration
 The entry point to the application is a list of all of the user's folders
