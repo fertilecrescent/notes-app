@@ -1,7 +1,7 @@
 # notes-app
 A fullstack node.js web app for taking notes
 
-You can find the live aplication hosted at this [link](https://notes-app-api-service.onrender.com)
+You can find the live aplication hosted at this [link](https://notes-app-api-service.onrender.com) (it might take about 30 seconds for the server to wake up when accessing the link).
 
 ## Demonstration
 The entry point to the application is a list of all of the user's folders
